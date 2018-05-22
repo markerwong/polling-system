@@ -1,0 +1,72 @@
+.pollingWrapper {
+  background-color: #d2c7c7;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  padding-bottom: 30px; }
+  .pollingWrapper h2 {
+    color: #6d6d92; }
+  .pollingWrapper .date {
+    font-size: 10pt;
+    color: #6d6d92;
+    margin: 0; }
+  .pollingWrapper .title {
+    font-weight: bold;
+    font-size: 16pt;
+    margin: 0; }
+  .pollingWrapper .choice-wrapper {
+    margin: 30px 10px; }
+    .pollingWrapper .choice-wrapper a {
+      background-color: #c15454;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      padding: 10px;
+      float: left;
+      color: #FFF;
+      cursor: pointer; }
+      .pollingWrapper .choice-wrapper a:nth-child(1) {
+        background-color: red; }
+      .pollingWrapper .choice-wrapper a:nth-child(2) {
+        background-color: green; }
+      .pollingWrapper .choice-wrapper a:nth-child(3) {
+        background-color: purple; }
+      .pollingWrapper .choice-wrapper a:nth-child(4) {
+        background-color: blue; }
+      .pollingWrapper .choice-wrapper a:nth-child(5) {
+        background-color: orange; }
+      .pollingWrapper .choice-wrapper a:nth-child(6) {
+        background-color: black; }
+    .pollingWrapper .choice-wrapper:after {
+      content: '';
+      display: block;
+      clear: both; }
+  .pollingWrapper .total-votes {
+    font-size: 10pt; }
+
+.pollingItem {
+  margin-bottom: 30px;
+  padding-bottom: 30px;
+  border-bottom: 1px dotted #000; }
+  .pollingItem .chart-wrapper,
+  .pollingItem .content-wrapper {
+    float: left; }
+  .pollingItem .chart {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: yellow;
+    margin: 20px auto; }
+  .pollingItem .chart::before {
+    content: '';
+    display: block;
+    margin-left: 50%;
+    height: 100%;
+    border-radius: 0 100% 100% 0 / 50%;
+    background: #655;
+    transform-origin: left;
+    transform: rotate(0.1turn); }
+  .pollingItem .content-wrapper .date {
+    margin: 0;
+    color: #6c6971;
+    font-weight: bold; }
+  .pollingItem .content-wrapper .title {
+    margin: 0; }
