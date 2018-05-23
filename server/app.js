@@ -42,7 +42,7 @@ const getMongoClient = async () => {
       time: new Date(),
     });
 
-    res.send('123');
+    res.send({ status: 'success' });
   });
 };
 

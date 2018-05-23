@@ -6,17 +6,22 @@ import { Doughnut } from 'react-chartjs-2';
 import pollData from './poll.json';
 import './css/style.css';
 
+const backendUrl = 'http://localhost:9000';
+
 const PollingWrapper = ({content, onVote}) => {
   const choices = [];
   const labels = [];
   const labelsData = [];
   for (let i = 0; i < content.answer.options.length; i++) {
+    const option = content.answer.options[i];
     choices.push(
-      <a data-value={content.answer.options[i].id} key={`choice${i}`} onClick={() => onVote(content.answer.options[i].id)}>
-        {content.answer.options[i].label}
+      <a data-value={option.id} key={`choice${i}`} onClick={() => onVote(option.id)}>
+        {option.label}
       </a>);
-    labels.push(content.answer.options[i].label);
-    labelsData.push(content.choice[content.answer.options[i].id]);
+    labels.push(option.label);
+    
+    const voteCount = content.choice[option.id];
+    (Number.isInteger(voteCount)) ? labelsData.push(voteCount) : labelsData.push(0);
   }
 
   const chatData = {
@@ -33,7 +38,6 @@ const PollingWrapper = ({content, onVote}) => {
       ],
     }],
   };
-
   const pieChart = <Doughnut data={chatData} />;
 
   return (
@@ -70,34 +74,38 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.pollResult = {};
+    this.pollResults = {};
     this.state = {
       currentQuestion: 0,
       total: 0,
       choice: {},
     };
 
-    fetch('http://localhost:9000/count', {}).then(res => res.json())
-      .then((result) => {
+    fetch(`${backendUrl}/count`, {}).then(res => res.json())
+      .then((results) => {
         let total = 0;
         const choice = {};
-        for (let i = 0; i < result.length; i++) {
-          if (result[i]._id.question === (this.state.currentQuestion + 1)) {
-            total += result[i].total;
-            choice[result[i]._id.choice] = result[i].total;
+        for (let i = 0; i < results.length; i++) {
+          const result = results[i];
+          if (result._id.question === (this.state.currentQuestion + 1)) {
+            total += result.total;
+            choice[result._id.choice] = result.total;
           }
         }
 
-        this.pollResult = result;
+        this.pollResults = results;
         this.setState({
           total,
           choice,
         });
+      }).catch((err) => {
+        alert('Cannot get data from backend');
+        window.location.reload();
       });
   }
 
   _onVote = (choice) => {
-    fetch('http://localhost:9000/poll', {
+    fetch(`${backendUrl}/poll`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -112,10 +120,11 @@ class App extends Component {
     if (this.state.currentQuestion < pollData.polls.length - 1) {
       let total = 0;
       const choice = {};
-      for (let i = 0; i < this.pollResult.length; i++) {
-        if (this.pollResult[i]._id.question === (this.state.currentQuestion + 2)) {
-          total += this.pollResult[i].total;
-          choice[this.pollResult[i]._id.choice] = this.pollResult[i].total;
+      for (let i = 0; i < this.pollResults.length; i++) {
+        const pollResult = this.pollResults[i]
+        if (pollResult._id.question === (this.state.currentQuestion + 2)) {
+          total += pollResult.total;
+          choice[pollResult._id.choice] = pollResult.total;
         }
       }
 
@@ -133,7 +142,7 @@ class App extends Component {
   render = () => {
     const pollingItems = [];
     for (let i = 0; i < pollData.polls.length; i++) {
-      if (i !== this.state.currentQuestion) {
+      if (i > this.state.currentQuestion) {
         const date = new Date(pollData.polls[i].publishedDate * 1000);
         const dateWithFormat = dateFormat(date, "dd mmm yyyy");
 
