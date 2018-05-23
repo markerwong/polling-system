@@ -42,7 +42,7 @@ const PollingWrapper = ({content, onVote}) => {
 
   return (
     <div>
-      <h2>Today's Poll</h2>
+      <h2>Today&#39;s Poll</h2>
       <p className="date">{content.date}</p>
       <p className="title">{content.title}</p>
       <div className="choice-wrapper">
@@ -79,6 +79,7 @@ class App extends Component {
       currentQuestion: 0,
       total: 0,
       choice: {},
+      isOnline: true,
     };
 
     fetch(`${backendUrl}/count`, {}).then(res => res.json())
@@ -99,12 +100,19 @@ class App extends Component {
           choice,
         });
       }).catch((err) => {
-        alert('Cannot get data from backend');
-        window.location.reload();
+        this.setState({
+          isOnline: false,
+        });
+        alert('Cannot connect to backend');
       });
   }
 
   _onVote = (choice) => {
+    if (!this.state.isOnline) {
+      alert('Cannot connect to backend');
+      return;
+    }
+
     fetch(`${backendUrl}/poll`, {
       method: 'POST',
       headers: {
